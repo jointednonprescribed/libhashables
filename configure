@@ -1,0 +1,46 @@
+#!/usr/bin/bash
+
+SYSNAME=`uname`
+
+BUILD_OPENSSL=1
+
+i=1
+while [ "$i" -le "$#" ]; do
+    arg=${!i}
+
+    if [[ $arg == "-Nopenssl" ]]; then
+        BUILD_OPENSSL=0
+    else
+        echo "Unrecognized argument: '$arg'..."
+    fi
+
+    ((i+=1))
+done
+
+if [[ $BUILD_OPENSSL == 1 ]]; then
+    echo "Building OpenSSL from scratch, requires the following dependencies:"
+    echo " * A \"make\" implementation"
+    echo " * Perl 5 with core modules (please read [NOTES-PERL.md](NOTES-PERL.md))"
+    echo " * The Perl module \`Text::Template\` (please read [NOTES-PERL.md](NOTES-PERL.md))"
+    echo " * a C-99 compiler"
+    echo " * POSIX C library (at least POSIX.1-2008), or compatible types and"
+    echo "   functionality."
+    echo " * a development environment in the form of development libraries and C"
+    echo "   header files"
+    echo " * a supported operating system"
+    echo "Please make sure you have these installed before continuing, however if you're"
+    echo "building on a Unix-like system or a Windows system with MinGW installed and included"
+    echo "in the Global or User level PATH variable, you likely already have the majority of"
+    echo "what you need."
+    echo -e "\nPress ENTER to continue..."
+
+    read tmp
+
+    if [[ $SYSNAME == "Linux" || $SYSNAME == "Darwin" || $SYSNAME == *"BSD" ]]; then
+        echo "Configuring OpenSSL build..."
+        openssl/Configure
+        make -C openssl
+    fi
+fi
+
+echo "You can now build using CMake in a new build directory..."
