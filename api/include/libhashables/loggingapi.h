@@ -6,7 +6,7 @@
 
 
 
-struct _lhashLogging
+struct LHASH_API _lhashLogging
 {
 	void (*InfoF)(const char *fmt, va_list ap);
 	void (*ErrorF)(const char *fmt, va_list ap);
@@ -14,15 +14,15 @@ struct _lhashLogging
 	void (*DebugF)(const char *fmt, va_list ap);
 };
 
-bool lhashLoggingIsInitialized( void );
-bool lhashInitLoggingNull( void );
-bool lhashInitLoggingBasic( void );
-bool lhashInitLogging( const struct _lhashLogging *callbacks );
+LHASH_API bool lhashLoggingIsInitialized( void );
+LHASH_API bool lhashInitLoggingNull( void );
+LHASH_API bool lhashInitLoggingBasic( void );
+LHASH_API bool lhashInitLogging( const struct _lhashLogging *callbacks );
 
-void lhashLogInfoF(const char *fmt, ...);
-void lhashLogErrorF(const char *fmt, ...);
-void lhashLogWarnF(const char *fmt, ...);
-void lhashLogDebugF(const char *fmt, ...);
+LHASH_API void lhashLogInfoF(const char *fmt, ...);
+LHASH_API void lhashLogErrorF(const char *fmt, ...);
+LHASH_API void lhashLogWarnF(const char *fmt, ...);
+LHASH_API void lhashLogDebugF(const char *fmt, ...);
 
 
 

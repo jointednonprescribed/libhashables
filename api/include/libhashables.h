@@ -24,9 +24,11 @@
  *     loggingapi.h
  *      |
  *     memoryapi.h
+ *      |
+ *     table.h
  *
  * Include from the bottom(s) of the header inclusion tree. */
-#include "libhashables/memoryapi.h"
+#include "libhashables/table.h"
 
 
 

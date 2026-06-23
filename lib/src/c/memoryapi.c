@@ -39,7 +39,8 @@ int _lhashMemory_NullMoveMemory(lhashMemRef, lhashMemRef)
 {
 	return -1;
 }
-void _lhashMemory_NullDeallocateMemory(lhashMemRef) {}
+void _lhashMemory_NullDeallocateMemory(lhashMemRef)
+{}
 bool _lhashMemory_NullReferenceIsNull(lhashMemRef)
 {
 	return true;
@@ -64,23 +65,6 @@ lhashMemRef _lhashMemory_NullGetNullReference( void )
 {
 	return NULL;
 }
-
-const struct _lhashMemory LHASH_MEMORY_NULL = {
-	.AllocateMemory = _lhashMemory_NullAllocateMemory,
-	.BorrowMemory = _lhashMemory_NullBorrowMemory,
-	.CopyMemory = _lhashMemory_NullCopyMemory,
-	.MoveMemory = _lhashMemory_NullMoveMemory,
-	.DeallocateMemory = _lhashMemory_NullDeallocateMemory,
-	.ReferenceIsNull = _lhashMemory_NullReferenceIsNull,
-	.ReferenceIsValid = _lhashMemory_NullReferenceIsValid,
-	.ReferenceIsOwner = _lhashMemory_NullReferenceIsOwner,
-	.ReferenceToAddress = _lhashMemory_NullReferenceToAddress,
-	.CReferenceToCAddress = _lhashMemory_NullCReferenceToCAddress,
-	.GetNullReference = _lhashMemory_NullGetNullReference
-};
-
-
-struct _lhashMemory LHASH_MEMORY = LHASH_MEMORY_NULL;
 
 
 void _lhashMemory_NullDestructor(size_t, void*) {}
@@ -276,18 +260,40 @@ lhashMemRef _lhashMemory_BasicGetNullReference( void )
 }
 
 const struct _lhashMemory LHASH_MEMORY_BASIC = {
-	.AllocateMemory = _lhashMemory_BasicAllocateMemory,
-	.BorrowMemory = _lhashMemory_BasicBorrowMemory,
-	.CopyMemory = _lhashMemory_BasicCopyMemory,
-	.MoveMemory = _lhashMemory_BasicMoveMemory,
-	.DeallocateMemory = _lhashMemory_BasicDeallocateMemory,
-	.ReferenceIsNull = _lhashMemory_BasicReferenceIsNull,
-	.ReferenceIsValid = _lhashMemory_BasicReferenceIsValid,
-	.ReferenceIsOwner = _lhashMemory_BasicReferenceIsOwner,
-	.ReferenceToAddress = _lhashMemory_BasicReferenceToAddress,
-	.CReferenceToCAddress = _lhashMemory_BasicCReferenceToCAddress,
-	.GetNullReference = _lhashMemory_BasicGetNullReference
+	.AllocateMemory            = _lhashMemory_BasicAllocateMemory,
+	.BorrowMemory              = _lhashMemory_BasicBorrowMemory,
+	.CopyMemory                = _lhashMemory_BasicCopyMemory,
+	.MoveMemory                = _lhashMemory_BasicMoveMemory,
+	.DeallocateMemory          = _lhashMemory_BasicDeallocateMemory,
+	.ReferenceIsNull           = _lhashMemory_BasicReferenceIsNull,
+	.ReferenceIsValid          = _lhashMemory_BasicReferenceIsValid,
+	.ReferenceIsOwner          = _lhashMemory_BasicReferenceIsOwner,
+	.ReferenceToAddress        = _lhashMemory_BasicReferenceToAddress,
+	.CReferenceToCAddress      = _lhashMemory_BasicCReferenceToCAddress,
+	.GetNullReference          = _lhashMemory_BasicGetNullReference,
+
+	.ReferenceIsNotAddress     = false,
+	.CachePeriod               = 0,
+	.CacheRefreshNotRequired   = true
+}, LHASH_MEMORY_NULL = {
+	.AllocateMemory            = _lhashMemory_NullAllocateMemory,
+	.BorrowMemory              = _lhashMemory_NullBorrowMemory,
+	.CopyMemory                = _lhashMemory_NullCopyMemory,
+	.MoveMemory                = _lhashMemory_NullMoveMemory,
+	.DeallocateMemory          = _lhashMemory_NullDeallocateMemory,
+	.ReferenceIsNull           = _lhashMemory_NullReferenceIsNull,
+	.ReferenceIsValid          = _lhashMemory_NullReferenceIsValid,
+	.ReferenceIsOwner          = _lhashMemory_NullReferenceIsOwner,
+	.ReferenceToAddress        = _lhashMemory_NullReferenceToAddress,
+	.CReferenceToCAddress      = _lhashMemory_NullCReferenceToCAddress,
+	.GetNullReference          = _lhashMemory_NullGetNullReference,
+
+	.ReferenceIsNotAddress     = false,
+	.CachePeriod               = 0,
+	.CacheRefreshNotRequired   = true
 };
+
+struct _lhashMemory LHASH_MEMORY = LHASH_MEMORY_NULL;
 
 lhashMemRef lhashMemRefFromIntegral(lhashUIntPtr_t integral)
 {
@@ -316,31 +322,49 @@ lhashMemRef lhashCopyMemory(lhashMemRef from, lhashMemRef to)
 {
 	return LHASH_MEMORY.CopyMemory(from, to);
 }
-int         lhashMoveMemory(lhashMemRef from, lhashMemRef to)
+int  lhashMoveMemory(lhashMemRef from, lhashMemRef to)
 {
 	return LHASH_MEMORY.MoveMemory(from, to);
 }
-void        lhashDeallocateMemory(lhashMemRef reference)
+void lhashDeallocateMemory(lhashMemRef reference)
 {
 	return LHASH_MEMORY.DeallocateMemory(reference);
 }
-bool        lhashReferenceIsNull(lhashMemRef reference)
+bool lhashReferenceIsNull(lhashMemRef reference)
 {
 	return LHASH_MEMORY.ReferenceIsNull(reference);
 }
-bool        lhashReferenceIsValid(lhashMemRef reference)
+bool lhashReferenceIsValid(lhashMemRef reference)
 {
 	return LHASH_MEMORY.ReferenceIsValid(reference);
 }
-bool        lhashReferenceIsOwner(lhashMemRef reference)
+bool lhashReferenceIsOwner(lhashMemRef reference)
 {
 	return LHASH_MEMORY.ReferenceIsOwner(reference);
 }
-void*       lhashReferenceToAddress(lhashMemRef reference)
+void* lhashReferenceToAddress(lhashMemRef reference)
 {
 	return LHASH_MEMORY.ReferenceToAddress(reference);
 }
 lhashMemRef lhashGetNullReference( void )
 {
 	return LHASH_MEMORY.GetNullReference();
+}
+LHASH_API bool lhashReferenceIsNotAddress( void )
+{
+	return LHASH_MEMORY.ReferenceIsNotAddress;
+}
+LHASH_API time_t lhashCachePeriod( void )
+{
+	return LHASH_MEMORY.CachePeriod;
+}
+LHASH_API bool lhashCachePeriodEx( time_t *cache_period_output )
+{
+	*cache_period_output = LHASH_MEMORY.CachePeriod;
+
+	return LHASH_MEMORY.CacheRefreshNotRequired;
+}
+LHASH_API bool lhashCacheRefreshNotRequired( void )
+{
+	return LHASH_MEMORY.CacheRefreshNotRequired;
 }
