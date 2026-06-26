@@ -245,8 +245,8 @@ lhashGCompleteType* lhashGCompleteType_InitSf(lhashGCompleteType *self, size_t s
  */
 struct LHASH_API _lhashGTypeHandler
 {
-    void               *_address;
-    const void         *_caddress;
+    void               *_paddr;
+    const void         *_gaddr;
     size_t               gavailable, pavailable, _gptr, _pptr;
     lhashGCompleteType   gtype;
 };
@@ -350,7 +350,7 @@ LHASH_API bool               lhashGTypeHandler_InsertionEnabled(const lhashGType
 LHASH_API bool               lhashGTypeHandler_ExtractionEnabled(const lhashGTypeHandler *self);
 LHASH_API bool               lhashGTypeHandler_FullIOEnabled(const lhashGTypeHandler *self);
 
-LHASH_API bool lhashGeneralizedTypeHandler_InvalidConfiguration(const lhashGTypeHandler *self, bool log_errors);
+LHASH_API bool               lhashGeneralizedTypeHandler_InvalidConfiguration(const lhashGTypeHandler *self, bool log_errors);
 
 
 LHASH_END_EXTERN_C

@@ -20,7 +20,7 @@ bool _LHASH_InsReject(lhashGTypeHandler *handler, const void *const src, size_t 
 
 bool _LHASH_VargPtr(lhashGTypeHandler *handler, va_list ap)
 {
-	if (handler == NULL || handler->_address == NULL)
+	if (handler == NULL || handler->_paddr == NULL)
 		return false;
 
 	void *const ptr = va_arg(ap, void*);
@@ -34,7 +34,7 @@ bool _LHASH_VargPtr(lhashGTypeHandler *handler, va_list ap)
 }
 bool _LHASH_InsPtr(lhashGTypeHandler *handler, const void *const src, size_t len)
 {
-	if (handler == NULL || handler->_address == NULL || src == NULL || len == 0)
+	if (handler == NULL || handler->_paddr == NULL || src == NULL || len == 0)
 		return false;
 
 	size_t pptr = handler->_pptr;
@@ -50,7 +50,7 @@ bool _LHASH_InsPtr(lhashGTypeHandler *handler, const void *const src, size_t len
 		len = spots_available;
 
 	const void **src_cursor  = (const void**) src;
-	void       **dest_cursor = (void**)       handler->_address;
+	void       **dest_cursor = (void**)       handler->_paddr;
 
 	if (len == 1)
 		// transfer 1 element;
@@ -68,7 +68,7 @@ bool _LHASH_InsPtr(lhashGTypeHandler *handler, const void *const src, size_t len
 }
 bool _LHASH_ExtrPtr(lhashGTypeHandler *handler, void *const dest, size_t max)
 {
-	if (handler == NULL || handler->_caddress == NULL || dest == NULL || max == 0)
+	if (handler == NULL || handler->_gaddr == NULL || dest == NULL || max == 0)
 		return false;
 
 	size_t gptr = handler->_gptr;
@@ -83,7 +83,7 @@ bool _LHASH_ExtrPtr(lhashGTypeHandler *handler, void *const dest, size_t max)
 	if (max > elements_available)
 		max = elements_available;
 
-	const void **src_cursor  = (const void**) handler->_caddress;
+	const void **src_cursor  = (const void**) handler->_gaddr;
 	void       **dest_cursor = (void**)       dest;
 
 	if (max == 1)
@@ -135,7 +135,7 @@ bool _LHASH_VargChar(lhashGTypeHandler *handler, va_list ap)
 }
 
 #define _LHASH_ExtrByteByByte(handler, dest, count, nmemb)                           \
-	if (handler == NULL || handler->_caddress == NULL || dest == NULL || count == 0) \
+	if (handler == NULL || handler->_gaddr == NULL || dest == NULL || count == 0) \
 		return false;                                                                \
 \
 	const size_t elements_available = handler->gavailable - handler->_gptr;          \
@@ -146,7 +146,7 @@ bool _LHASH_VargChar(lhashGTypeHandler *handler, va_list ap)
 	const size_t bytesc = count * nmemb;                                             \
 \
 	char       *destcurs = (char*) dest;                                             \
-	const char *srccurs  = (const char*) handler->_caddress;                         \
+	const char *srccurs  = (const char*) handler->_gaddr;                         \
 \
 	size_t i = 0;                                                                    \
 \
@@ -183,7 +183,7 @@ bool _LHASH_ExtrChar(lhashGTypeHandler *handler, void *const dest, size_t count)
 }
 
 #define _LHASH_InsByteByByte(handler, src, count, nmemb)                             \
-	if (handler == NULL || handler->_address == NULL || src == NULL || count == 0)   \
+	if (handler == NULL || handler->_paddr == NULL || src == NULL || count == 0)   \
 		return false;                                                                \
 \
 	const size_t slots_available = handler->pavailable - handler->_pptr;             \
@@ -193,7 +193,7 @@ bool _LHASH_ExtrChar(lhashGTypeHandler *handler, void *const dest, size_t count)
 \
 	const size_t bytesc = count * nmemb;                                             \
 \
-	char       *destcurs = (char*) handler->_address;                                \
+	char       *destcurs = (char*) handler->_paddr;                                \
 	const char *srccurs  = (const char*) src;                                        \
 \
 	size_t i = 0;                                                                    \
@@ -231,7 +231,7 @@ bool _LHASH_InsChar(lhashGTypeHandler *handler, void *const dest, size_t count)
 }
 
 #define _LHASH_ExtrQWordByQWord(handler, dest, count, nmemb)                         \
-	if (handler == NULL || handler->_caddress == NULL || dest == NULL || count == 0) \
+	if (handler == NULL || handler->_gaddr == NULL || dest == NULL || count == 0) \
 		return false;                                                                \
 \
 	const size_t elements_available = handler->gavailable - handler->_gptr;          \
@@ -242,7 +242,7 @@ bool _LHASH_InsChar(lhashGTypeHandler *handler, void *const dest, size_t count)
 	const size_t bytesc = count * nmemb;                                             \
 \
 	uint64_t       *destcurs = (uint64_t*) dest;                                     \
-	const uint64_t *srccurs  = (const uint64_t*) handler->_caddress;                 \
+	const uint64_t *srccurs  = (const uint64_t*) handler->_gaddr;                 \
 \
 	size_t i = 0;                                                                    \
 \
@@ -275,7 +275,7 @@ bool _LHASH_ExtrHHHash(lhashGTypeHandler *handler, void *const dest, size_t coun
 }
 
 #define _LHASH_InsQWordByQWord(handler, src, count, nmemb)                           \
-	if (handler == NULL || handler->_address == NULL || src == NULL || count == 0)   \
+	if (handler == NULL || handler->_paddr == NULL || src == NULL || count == 0)   \
 		return false;                                                                \
 \
 	const size_t slots_available = handler->pavailable - handler->_pptr;             \
@@ -285,7 +285,7 @@ bool _LHASH_ExtrHHHash(lhashGTypeHandler *handler, void *const dest, size_t coun
 \
 	const size_t bytesc = count * nmemb;                                             \
 \
-	uint64_t       *destcurs = (uint64_t*) handler->_address;                        \
+	uint64_t       *destcurs = (uint64_t*) handler->_paddr;                        \
 	const uint64_t *srccurs  = (const uint64_t*) src;                                \
 \
 	size_t i = 0;                                                                    \
@@ -320,7 +320,7 @@ bool _LHASH_InsHHHash(lhashGTypeHandler *handler, void *const dest, size_t count
 
 bool _LHASH_VargFloat(lhashGTypeHandler *handler, va_list ap)
 {
-	if (handler == NULL || handler->_address == NULL)
+	if (handler == NULL || handler->_paddr == NULL)
 		return false;
 
 	float f = va_arg(ap, float);
@@ -329,7 +329,7 @@ bool _LHASH_VargFloat(lhashGTypeHandler *handler, va_list ap)
 }
 bool _LHASH_ExtrFloat(lhashGTypeHandler *handler, void *const dest, size_t max)
 {
-	if (handler == NULL || handler->_caddress == NULL)
+	if (handler == NULL || handler->_gaddr == NULL)
 		return false;
 
 	const size_t available = handler->gavailable - handler->_gptr;
@@ -338,7 +338,7 @@ bool _LHASH_ExtrFloat(lhashGTypeHandler *handler, void *const dest, size_t max)
 		max = available;
 
 	float       *destf = (float*) dest;
-	const float *srcf  = (const float*) handler->_caddress;
+	const float *srcf  = (const float*) handler->_gaddr;
 
 	size_t i = 0;
 
@@ -349,7 +349,7 @@ bool _LHASH_ExtrFloat(lhashGTypeHandler *handler, void *const dest, size_t max)
 }
 bool _LHASH_InsFloat(lhashGTypeHandler *handler, const void *const src, size_t max)
 {
-	if (handler == NULL || handler->_caddress == NULL)
+	if (handler == NULL || handler->_gaddr == NULL)
 		return false;
 
 	const size_t available = handler->gavailable - handler->_gptr;
@@ -357,7 +357,7 @@ bool _LHASH_InsFloat(lhashGTypeHandler *handler, const void *const src, size_t m
 	if (max > available)
 		max = available;
 
-	float       *destf = (float*) handler->_address;
+	float       *destf = (float*) handler->_paddr;
 	const float *srcf  = (const float*) src;
 
 	size_t i = 0;
@@ -370,7 +370,7 @@ bool _LHASH_InsFloat(lhashGTypeHandler *handler, const void *const src, size_t m
 
 bool _LHASH_VargDouble(lhashGTypeHandler *handler, va_list ap)
 {
-	if (handler == NULL || handler->_address == NULL)
+	if (handler == NULL || handler->_paddr == NULL)
 		return false;
 
 	double d = va_arg(ap, double);
@@ -379,7 +379,7 @@ bool _LHASH_VargDouble(lhashGTypeHandler *handler, va_list ap)
 }
 bool _LHASH_ExtrDouble(lhashGTypeHandler *handler, void *const dest, size_t max)
 {
-	if (handler == NULL || handler->_caddress == NULL)
+	if (handler == NULL || handler->_gaddr == NULL)
 		return false;
 
 	const size_t available = handler->gavailable - handler->_gptr;
@@ -388,7 +388,7 @@ bool _LHASH_ExtrDouble(lhashGTypeHandler *handler, void *const dest, size_t max)
 		max = available;
 
 	double       *destf = (double*) dest;
-	const double *srcf  = (const double*) handler->_caddress;
+	const double *srcf  = (const double*) handler->_gaddr;
 
 	size_t i = 0;
 
@@ -399,7 +399,7 @@ bool _LHASH_ExtrDouble(lhashGTypeHandler *handler, void *const dest, size_t max)
 }
 bool _LHASH_InsDouble(lhashGTypeHandler *handler, const void *const src, size_t max)
 {
-	if (handler == NULL || handler->_caddress == NULL)
+	if (handler == NULL || handler->_gaddr == NULL)
 		return false;
 
 	const size_t available = handler->gavailable - handler->_gptr;
@@ -407,7 +407,7 @@ bool _LHASH_InsDouble(lhashGTypeHandler *handler, const void *const src, size_t 
 	if (max > available)
 		max = available;
 
-	double       *destf = (double*) handler->_address;
+	double       *destf = (double*) handler->_paddr;
 	const double *srcf  = (const double*) src;
 
 	size_t i = 0;
@@ -420,7 +420,7 @@ bool _LHASH_InsDouble(lhashGTypeHandler *handler, const void *const src, size_t 
 
 bool _LHASH_VargLDouble(lhashGTypeHandler *handler, va_list ap)
 {
-	if (handler == NULL || handler->_address == NULL)
+	if (handler == NULL || handler->_paddr == NULL)
 		return false;
 
 	long double d = va_arg(ap, long double);
@@ -429,7 +429,7 @@ bool _LHASH_VargLDouble(lhashGTypeHandler *handler, va_list ap)
 }
 bool _LHASH_ExtrLDouble(lhashGTypeHandler *handler, void *const dest, size_t max)
 {
-	if (handler == NULL || handler->_caddress == NULL)
+	if (handler == NULL || handler->_gaddr == NULL)
 		return false;
 
 	const size_t available = handler->gavailable - handler->_gptr;
@@ -438,7 +438,7 @@ bool _LHASH_ExtrLDouble(lhashGTypeHandler *handler, void *const dest, size_t max
 		max = available;
 
 	long double       *destf = (long double*) dest;
-	const long double *srcf  = (const long double*) handler->_caddress;
+	const long double *srcf  = (const long double*) handler->_gaddr;
 
 	size_t i = 0;
 
@@ -449,7 +449,7 @@ bool _LHASH_ExtrLDouble(lhashGTypeHandler *handler, void *const dest, size_t max
 }
 bool _LHASH_InsLDouble(lhashGTypeHandler *handler, const void *const src, size_t max)
 {
-	if (handler == NULL || handler->_caddress == NULL)
+	if (handler == NULL || handler->_gaddr == NULL)
 		return false;
 
 	const size_t available = handler->gavailable - handler->_gptr;
@@ -457,7 +457,7 @@ bool _LHASH_InsLDouble(lhashGTypeHandler *handler, const void *const src, size_t
 	if (max > available)
 		max = available;
 
-	long double       *destf = (long double*) handler->_address;
+	long double       *destf = (long double*) handler->_paddr;
 	const long double *srcf  = (const long double*) src;
 
 	size_t i = 0;
@@ -470,7 +470,7 @@ bool _LHASH_InsLDouble(lhashGTypeHandler *handler, const void *const src, size_t
 
 bool _LHASH_VargTime(lhashGTypeHandler *handler, va_list ap)
 {
-	if (handler == NULL || handler->_address == NULL)
+	if (handler == NULL || handler->_paddr == NULL)
 		return false;
 
 	time_t t = va_arg(ap, time_t);
@@ -488,7 +488,7 @@ bool _LHASH_InsTime(lhashGTypeHandler *handler, const void *const src, size_t ma
 
 bool _LHASH_VargLTime(lhashGTypeHandler *handler, va_list ap)
 {
-	if (handler == NULL || handler->_address == NULL)
+	if (handler == NULL || handler->_paddr == NULL)
 		return false;
 
 	lhashnseconds_t lt = va_arg(ap, lhashnseconds_t);
@@ -497,7 +497,7 @@ bool _LHASH_VargLTime(lhashGTypeHandler *handler, va_list ap)
 }
 bool _LHASH_ExtrLTime(lhashGTypeHandler *handler, void *const dest, size_t max)
 {
-	if (handler == NULL || handler->_caddress == NULL)
+	if (handler == NULL || handler->_gaddr == NULL)
 		return false;
 
 	const size_t available = handler->gavailable - handler->_gptr;
@@ -506,7 +506,7 @@ bool _LHASH_ExtrLTime(lhashGTypeHandler *handler, void *const dest, size_t max)
 		max = available;
 
 	lhashnseconds_t       *destf = (lhashnseconds_t*) dest;
-	const lhashnseconds_t *srcf  = (const lhashnseconds_t*) handler->_caddress;
+	const lhashnseconds_t *srcf  = (const lhashnseconds_t*) handler->_gaddr;
 
 	size_t i = 0;
 
@@ -517,7 +517,7 @@ bool _LHASH_ExtrLTime(lhashGTypeHandler *handler, void *const dest, size_t max)
 }
 bool _LHASH_InsLTime(lhashGTypeHandler *handler, const void *const src, size_t max)
 {
-	if (handler == NULL || handler->_caddress == NULL)
+	if (handler == NULL || handler->_gaddr == NULL)
 		return false;
 
 	const size_t available = handler->gavailable - handler->_gptr;
@@ -525,7 +525,7 @@ bool _LHASH_InsLTime(lhashGTypeHandler *handler, const void *const src, size_t m
 	if (max > available)
 		max = available;
 
-	lhashnseconds_t       *destf = (lhashnseconds_t*) handler->_address;
+	lhashnseconds_t       *destf = (lhashnseconds_t*) handler->_paddr;
 	const lhashnseconds_t *srcf  = (const lhashnseconds_t*) src;
 
 	size_t i = 0;
@@ -1278,8 +1278,8 @@ LHASH_API lhashGTypeHandler  lhashGTypeHandler_MakeOutput(
 	size_t               amount_available
 ){
 	return (lhashGTypeHandler) {
-		._address   = NULL,
-		._caddress  = address,
+		._paddr   = NULL,
+		._gaddr  = address,
 		.gavailable = amount_available,
 		.pavailable = 0,
 		._gptr      = 0,
@@ -1293,8 +1293,8 @@ LHASH_API lhashGTypeHandler  lhashGTypeHandler_MakeInput(
 	size_t               insertion_limit
 ){
 	return (lhashGTypeHandler) {
-		._address   = address,
-		._caddress  = NULL,
+		._paddr   = address,
+		._gaddr  = NULL,
 		.gavailable = 0,
 		.pavailable = insertion_limit,
 		._gptr      = 0,
@@ -1310,8 +1310,8 @@ LHASH_API lhashGTypeHandler  lhashGTypeHandler_MakeIO(
 	size_t               insertion_limit
 ){
 	return (lhashGTypeHandler) {
-		._address   = input_dest_address,
-		._caddress  = output_src_address,
+		._paddr   = input_dest_address,
+		._gaddr  = output_src_address,
 		.gavailable = extraction_limit,
 		.pavailable = insertion_limit,
 		._gptr      = 0,
@@ -1329,8 +1329,8 @@ LHASH_API lhashGTypeHandler* lhashGTypeHandler_InitOutput(
 	if (self == NULL)
 		return NULL;
 
-	self->_address   = NULL;
-	self->_caddress  = address;
+	self->_paddr   = NULL;
+	self->_gaddr  = address;
 	self->gavailable = amount_available;
 	self->pavailable = 0;
 	self->_gptr      = 0;
@@ -1348,8 +1348,8 @@ LHASH_API lhashGTypeHandler* lhashGTypeHandler_InitInput(
 	if (self == NULL)
 		return NULL;
 
-	self->_address   = address;
-	self->_caddress  = NULL;
+	self->_paddr   = address;
+	self->_gaddr  = NULL;
 	self->gavailable = 0;
 	self->pavailable = insertion_limit;
 	self->_gptr      = 0;
@@ -1369,8 +1369,8 @@ LHASH_API lhashGTypeHandler* lhashGTypeHandler_InitIO(
 	if (self == NULL)
 		return NULL;
 
-	self->_address   = input_dest_address;
-	self->_caddress  = output_src_address;
+	self->_paddr   = input_dest_address;
+	self->_gaddr  = output_src_address;
 	self->gavailable = extraction_limit;
 	self->pavailable = insertion_limit;
 	self->_gptr      = 0;
@@ -1387,7 +1387,7 @@ LHASH_API void lhashGTypeHandler_SetExtractionLocation(
 	if (self == NULL)
 		return;
 
-	self->_caddress  = address;
+	self->_gaddr  = address;
 	self->gavailable = limit;
 }
 LHASH_API void lhashGTypeHandler_SetInsertionLocation(
@@ -1397,7 +1397,7 @@ LHASH_API void lhashGTypeHandler_SetInsertionLocation(
 	if (self == NULL)
 		return;
 
-	self->_address   = address;
+	self->_paddr   = address;
 	self->pavailable = limit;
 }
 LHASH_API void lhashGTypeHandler_SetType(lhashGTypeHandler *self, lhashGeneralizedType gtype)
@@ -1408,11 +1408,11 @@ LHASH_API void lhashGTypeHandler_SetType(lhashGTypeHandler *self, lhashGeneraliz
 
 LHASH_API const void* lhashGTypeHandler_GetExtractionAddress(const lhashGTypeHandler *self)
 {
-	return (self == NULL)? NULL : self->_caddress;
+	return (self == NULL)? NULL : self->_gaddr;
 }
 LHASH_API void* lhashGTypeHandler_GetInsertionAddress(const lhashGTypeHandler *self)
 {
-	return (self == NULL)? NULL : self->_address;
+	return (self == NULL)? NULL : self->_paddr;
 }
 LHASH_API size_t lhashGTypeHandler_BytesAvailable(const lhashGTypeHandler *self)
 {
@@ -1535,15 +1535,15 @@ LHASH_API size_t lhashGTypeHandler_Insert(
 
 LHASH_API bool lhashGTypeHandler_InsertionEnabled(const lhashGTypeHandler *self)
 {
-	return self != NULL && self->_address != NULL;
+	return self != NULL && self->_paddr != NULL;
 }
 LHASH_API bool lhashGTypeHandler_ExtractionEnabled(const lhashGTypeHandler *self)
 {
-	return self != NULL && self->_caddress != NULL;
+	return self != NULL && self->_gaddr != NULL;
 }
 LHASH_API bool lhashGTypeHandler_FullIOEnabled(const lhashGTypeHandler *self)
 {
-	return self != NULL && self->_address != NULL && self->_caddress != NULL;
+	return self != NULL && self->_paddr != NULL && self->_gaddr != NULL;
 }
 
 LHASH_API bool lhashGTypeHandler_InvalidConfiguration(const lhashGTypeHandler *self, bool log_errors)

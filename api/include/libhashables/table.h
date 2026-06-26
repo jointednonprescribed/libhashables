@@ -86,9 +86,8 @@ LHASH_API size_t                  lhashTableColumnHeader_GetArrayLength(const lh
  */
 struct _lhashTable
 {
-    lhashMemRef              data;
-    lhashTableColumnHeader *_addrcache;
-    time_t                  _cachetime;
+    lhashMemRef data;
+    size_t cols, rows;
 };
 
 extern LHASH_API const lhashTable lhashTable_Null;
@@ -123,8 +122,61 @@ LHASH_API lhashTable* lhashTable_InitAppendedCd(
     size_t  header_count,    lhashTableColumnHeader duplicate_header
 );
 
+/* Push a row into the table from a type handler, chainable; return value is always self. */
+LHASH_API lhashTable* lhashTable_Push(lhashTable *self, lhashGTypeHandler *row_streamer);
+/* Push an unpadded tuple as a row into the table, nbytes is the total size (in bytes) of the
+.  tuple. */
+LHASH_API lhashTable* lhashTable_PushT(lhashTable *self, const void *tuple, size_t nbytes);
+
+/* Push a row into the table from a type handler at a particular index, chainable; return
+.  value is always self. */
+LHASH_API lhashTable* lhashTable_PushI(lhashTable *self, size_t at, lhashGTypeHandler *row_streamer);
+/* Push an unpadded tuple as a row into the table at a particular index, nbytes is the total
+.  size (in bytes) of the tuple. */
+LHASH_API lhashTable* lhashTable_PushTi(lhashTable *self, size_t at, const void *tuple, size_t nbytes);
+
+/* Copy a row from the table into a type handler, chainable; return value is always
+.  self. */
+LHASH_API lhashTable* lhashTable_Get(lhashTable *self, size_t row, lhashGTypeHandler *row_streamer);
+/* Copy a row from the table as an unpadded tuple, nbytes is the total size (in bytes) of the
+.  buffer for this tuple. */
+LHASH_API lhashTable* lhashTable_GetT(lhashTable *self, size_t row, void *buffer, size_t nbytes);
+
+/* Pop (copy, then remove) a row from the table into a type handler, chainable; return value
+.  is always self. */
+LHASH_API lhashTable* lhashTable_Pop(lhashTable *self, size_t row, lhashGTypeHandler *row_streamer);
+/* Pop a row from the table as an unpadded tuple, nbytes is the total size (in bytes) of the
+.  buffer for this tuple. */
+LHASH_API lhashTable* lhashTable_PopT(lhashTable *self, size_t row, void *buffer, size_t nbytes);
+
+/* Remove a row from the table, chainable; return value is always self. */
+LHASH_API lhashTable* lhashTable_Remove(lhashTable *self, size_t row);
+
+LHASH_API size_t      lhashTable_GetColumnSize(lhashTable *self, size_t col);
+LHASH_API size_t      lhashTable_GetTableWidth(lhashTable *self);
+LHASH_API size_t      lhashTable_GetTableHeight(lhashTable *self);
+#define               lhashTable_GetRowCount lhashTable_GetTableHeight
+LHASH_API size_t      lhashTable_GetColumnCount(lhashTable *self);
+LHASH_API size_t      lhashTable_GetCellCount(lhashTable *self);
+
+LHASH_API lhashTableColumnHeader* lhashTable_GetColumnHeader(lhashTable *self, size_t col);
+
+LHASH_API void*       lhashTable_GetRow(lhashTable *self, size_t row);
+
+LHASH_API lhashTable* lhashTable_GetCell(lhashTable *self, size_t col, size_t row, void *output, size_t output_size);
+LHASH_API lhashTable* lhashTable_GetCellH(lhashTable *self, size_t col, size_t row, lhashGTypeHandler *output);
+
+LHASH_API lhashTable* lhashTable_SetCell(lhashTable *self, size_t col, size_t row, const void *input);
+LHASH_API lhashTable* lhashTable_SetCellH(lhashTable *self, size_t col, size_t row, lhashGTypeHandler *input);
+
+LHASH_API int         lhashTable_Drop(lhashTable *self);
+
 
 LHASH_END_EXTERN_C
+
+#ifdef __cplusplus && !defined(_LIBHASHABLES__TABLE_HPP_)
+#   include "c++/table.hpp"
+#endif
 
 
 
